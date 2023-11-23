@@ -19,7 +19,12 @@ def get_binance_prices(request):
 def getBinancePrices(request):
     try:
         binance_api = BinanceAPI(API_KEY, API_SECRET)
-        symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT']  # Agrega los símbolos que desees obtener
+        symbols = [
+            'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SOLUSDT',
+            'ADAUSDT', 'XRPUSDT', 'LTCUSDT', 'LINKUSDT', 'BCHUSDT',
+            'BNBUSDT', 'XLMUSDT', 'DOGEUSDT', 'UNIUSDT', 'EOSUSDT',
+            'TRXUSDT'
+        ] # Agrega los símbolos que desees obtener
         prices = binance_api.get_multiple_symbol_prices(symbols)
         return JsonResponse({'prices': prices})
     except BinanceAPIException as e:
@@ -47,42 +52,91 @@ def list_cryptos(request):
         binance_api = BinanceAPI(api_key, api_secret)
 
         # Agrega los símbolos de criptomonedas que desees obtener
-        symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SOLUSDT']
+        symbols = [
+            'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SOLUSDT',
+            'ADAUSDT', 'XRPUSDT', 'LTCUSDT', 'LINKUSDT', 'BCHUSDT',
+            'BNBUSDT', 'XLMUSDT', 'DOGEUSDT', 'UNIUSDT', 'EOSUSDT',
+            'TRXUSDT'
+        ]
         cryptos_info = binance_api.get_multiple_crypto_info(symbols)
 
         # Formatea la información para pasarla al template
         crypto_data = [
             {
                 "name": "Bitcoin",
-                "country": "Cryptoland",
                 "symbol": "BTCUSDT",
                 "price": cryptos_info['BTCUSDT']['price']
             },
             {
                 "name": "Ethereum",
-                "country": "Cryptoland",
                 "symbol": "ETHUSDT",
                 "price": cryptos_info['ETHUSDT']['price']
             },
             {
                 "name": "Binance Coin",
-                "country": "Cryptoland",
                 "symbol": "BNBUSDT",
                 "price": cryptos_info['BNBUSDT']['price']
             },
             {
-                "name": "Polkadot",
-                "country": "Cryptoland",    
+                "name": "Polkadot",    
                 "symbol": "DOTUSDT",
                 "price": cryptos_info['DOTUSDT']['price']
             },
             {
                 "name": "Solana",
-                "country": "Cryptoland",
                 "symbol": "SOLUSDT",
                 "price": cryptos_info['SOLUSDT']['price']
             },
-            # Agrega más criptomonedas según sea necesario
+            {
+                "name": "Cardano",
+                "symbol": "ADAUSDT",
+                "price": cryptos_info['ADAUSDT']['price']
+            },
+            {
+                "name": "Ripple",
+                "symbol": "XRPUSDT",
+                "price": cryptos_info['XRPUSDT']['price']
+            },
+            {
+                "name": "Litecoin",
+                "symbol": "LTCUSDT",
+                "price": cryptos_info['LTCUSDT']['price']
+            },
+            {
+                "name": "Chainlink",
+                "symbol": "LINKUSDT",
+                "price": cryptos_info['LINKUSDT']['price']
+            },
+            {
+                "name": "Bitcoin Cash",
+                "symbol": "BCHUSDT",
+                "price": cryptos_info['BCHUSDT']['price']
+            },
+            {
+                "name": "Stellar",
+                "symbol": "XLMUSDT",
+                "price": cryptos_info['XLMUSDT']['price']
+            },
+            {
+                "name": "Dogecoin",
+                "symbol": "DOGEUSDT",
+                "price": cryptos_info['DOGEUSDT']['price']
+            },
+            {
+                "name": "Uniswap",
+                "symbol": "UNIUSDT",
+                "price": cryptos_info['UNIUSDT']['price']
+            },
+            {
+                "name": "EOS",
+                "symbol": "EOSUSDT",
+                "price": cryptos_info['EOSUSDT']['price']
+            },
+            {
+                "name": "TRON",
+                "symbol": "TRXUSDT",
+                "price": cryptos_info['TRXUSDT']['price']
+            },
         ]
 
         return JsonResponse({'cryptos': crypto_data})

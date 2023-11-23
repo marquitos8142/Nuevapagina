@@ -1,6 +1,22 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
+const searchByName = (query, cryptos) => {
+    return cryptos.filter((crypto) =>
+        crypto.name.toLowerCase().includes(query.toLowerCase())
+    );
+};
+
+const filterByPrice = (condition, cryptos) => {
+    return cryptos.filter((crypto) => {
+        if (condition === 'less') {
+            return crypto.price < 10000; // Cambia el valor según tu criterio
+        } else if (condition === 'greater') {
+            return crypto.price >= 10000; // Cambia el valor según tu criterio
+        }
+        return true; // Si no hay filtro, devolver todas las criptomonedas
+    });
+};
 const getBinancePrices = async () => {
     try {
         const response = await fetch("http://127.0.0.1:8000/app/get_binance_prices/");
@@ -52,9 +68,25 @@ const listCryptos = async () => {
             return;
         }
 
+        // Obtener valores de búsqueda y filtro
+        const searchQuery = document.getElementById('search').value;
+        const priceFilter = document.getElementById('priceFilter').value;
+
+        let filteredCryptos = data.cryptos;
+
+        // Aplicar búsqueda
+        if (searchQuery) {
+            filteredCryptos = searchByName(searchQuery, filteredCryptos);
+        }
+
+        // Aplicar filtro de precio
+        if (priceFilter) {
+            filteredCryptos = filterByPrice(priceFilter, filteredCryptos);
+        }
+
         let content = '';
-        for (let index = 0; index < data.cryptos.length; index++) {
-            const crypto = data.cryptos[index];
+        for (let index = 0; index < filteredCryptos.length; index++) {
+            const crypto = filteredCryptos[index];
 
             // Asegúrate de que crypto.symbol esté definido
             if (!crypto.symbol) {
@@ -68,15 +100,7 @@ const listCryptos = async () => {
                 <tr>
                     <td>${index + 1}</td>
                     <td>${crypto.name}</td>
-                    <td>${crypto.country}</td>
-                    <td>${crypto.birthday}</td>
-                    <td>${crypto.percent}</td>
-                    <td>${binanceInfo.price}</td>
-                    <td>${crypto.percent && crypto.percent >= 8 
-                        ? "<i class='fa-solid fa-check' style='color: green;'></i>" 
-                        : "<i class='fa-solid fa-xmark' style='color: red;'></i>"}
-                    </td>
-
+                    <td>$${binanceInfo.price}</td>
                 </tr>`;
         }
 
@@ -91,9 +115,6 @@ const listCryptos = async () => {
             columns: [
                 { data: "#" },
                 { data: "Name" },
-                { data: "Country" },
-                {data: "BirthDay"},
-                { data: "Percent" },
                 { data: "Price" }
             ],
             columnDefs: [
@@ -107,7 +128,7 @@ const listCryptos = async () => {
 
         dataTableIsInitialized = true;
     } catch (ex) {
-        //console.error('Error al listar criptomonedas:', ex);
+        console.error('Error al listar criptomonedas:', ex);
         // O muestra el mensaje de error en la interfaz de usuario
         // (por ejemplo, usando un elemento <div> en lugar de alert)
         //alert('Se produjo un error al listar criptomonedas. Consulta la consola para más detalles.');
@@ -115,5 +136,15 @@ const listCryptos = async () => {
 };
 
 window.addEventListener("load", async () => {
+    await listCryptos();
+});
+
+// Evento de cambio en el campo de búsqueda
+$('#search').on('input', async function () {
+    await listCryptos();
+});
+
+// Evento de cambio en el filtro de precio
+$('#priceFilter').change(async function () {
     await listCryptos();
 });
